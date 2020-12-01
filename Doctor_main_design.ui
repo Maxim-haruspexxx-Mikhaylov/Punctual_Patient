@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>737</width>
-    <height>850</height>
+    <height>831</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>30</x>
       <y>30</y>
       <width>351</width>
-      <height>761</height>
+      <height>751</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -52,7 +52,7 @@
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>220</y>
+      <y>380</y>
       <width>251</width>
       <height>91</height>
      </rect>
@@ -70,7 +70,7 @@
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>290</y>
+      <y>450</y>
       <width>181</width>
       <height>91</height>
      </rect>
@@ -156,11 +156,11 @@
      <string>11</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="button_start_finish">
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>400</y>
+      <y>560</y>
       <width>251</width>
       <height>51</height>
      </rect>
@@ -169,11 +169,11 @@
      <string>Начать следующий приём</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="button_extend_appointment">
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>460</y>
+      <y>620</y>
       <width>251</width>
       <height>51</height>
      </rect>
@@ -182,17 +182,54 @@
      <string>Продлить ожидаемое время приёма</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="button_leave">
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>520</y>
+      <y>680</y>
       <width>251</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
      <string>Отлучиться (3 мин)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_expected_timer">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>300</y>
+      <width>181</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>48</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>11:30</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_tag_expected_time">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>220</y>
+      <width>211</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>22</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>   Ожидаемое 
+ время приёма:</string>
     </property>
    </widget>
   </widget>
