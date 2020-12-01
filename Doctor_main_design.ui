@@ -6,31 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>737</width>
-    <height>831</height>
+    <width>730</width>
+    <height>861</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Doctor</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QFrame" name="frame">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>30</y>
-      <width>351</width>
-      <height>751</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_time">
+   <widget class="QLabel" name="label_clock">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -47,8 +31,11 @@
     <property name="text">
      <string>11:20</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
-   <widget class="QLabel" name="label_tag_timer">
+   <widget class="QLabel" name="label_tag_timer_app">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -65,8 +52,11 @@
     <property name="text">
      <string>Время приёма:</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
-   <widget class="QLabel" name="label_timer_appointment">
+   <widget class="QLabel" name="label_timer_app">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -81,7 +71,10 @@
      </font>
     </property>
     <property name="text">
-     <string>10:20</string>
+     <string>0:00</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="label_tag_mid_time">
@@ -166,10 +159,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>Начать следующий приём</string>
+     <string>Завершить приём / начать следующий приём</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="button_extend_appointment">
+   <widget class="QPushButton" name="button_extend_app">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -179,7 +172,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Продлить ожидаемое время приёма</string>
+     <string>Продлить время приёма</string>
     </property>
    </widget>
    <widget class="QPushButton" name="button_leave">
@@ -210,7 +203,10 @@
      </font>
     </property>
     <property name="text">
-     <string>11:30</string>
+     <string>10:00</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="label_tag_expected_time">
@@ -228,8 +224,34 @@
      </font>
     </property>
     <property name="text">
-     <string>   Ожидаемое 
+     <string>Ожидаемое 
  время приёма:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_make_app">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>740</y>
+      <width>351</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Добавить запись</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="table_widget">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>351</width>
+      <height>701</height>
+     </rect>
     </property>
    </widget>
   </widget>
@@ -238,10 +260,16 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>737</width>
+     <width>730</width>
      <height>20</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menumenu">
+    <property name="title">
+     <string>menu</string>
+    </property>
+   </widget>
+   <addaction name="menumenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
