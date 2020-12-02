@@ -15,29 +15,25 @@ class Doctor(QMainWindow):
 
         self.open_table()
 
-        self.clock = QTimer(self)
+        self.clock = QTimer()
         self.clock.timeout.connect(self.time_update)
-        self.clock.start(1000)
+        self.clock.start(1)
 
         self.time_app = 0
-        self.time_app_interval = 1000
-        self.time_app = QTimer()
-        self.time_update()
-        self.time_app.setInterval(self.time_app_interval)
-        self.time_app.timeout.connect(self.update_uptime)
+        self.time_interval = 1000
+        self.timer_up = QTimer()
+        self.timer_up.setInterval(self.time_interval)
+        self.timer_up.timeout.connect(self.update_uptime)
+        self.timer_up.start()
+
+    def update_uptime(self):
+        self.time_app += 1
+        self.label_timer_app.setText(time.strftime('%M:%S', time.gmtime(self.time_app)))
 
     def time_update(self):
         current_time = QTime.currentTime()
         time_on_display = current_time.toString('hh:mm')
         self.label_clock.setText(time_on_display)
-
-    def update_uptime(self):
-        self.time += 1
-        self.set_timer(self.time)
-
-    def set_timer(self, num):
-        self.time_app = num
-        self.label_timer_app.setText(time.strftime('%M:%S', time.gmtime(self.time_app)))
 
     def open_table(self):
         with open('appointments_eng.csv', encoding="utf8") as csvfile:
