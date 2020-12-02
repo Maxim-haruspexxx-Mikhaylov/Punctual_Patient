@@ -15,8 +15,13 @@ class Doctor(QMainWindow):
 
         self.open_table()
 
+        self.app_started = False
+
+        self.patients_num = 0
+        self.update_patients_num()
+
         self.clock = QTimer()
-        self.clock.timeout.connect(self.time_update)
+        self.clock.timeout.connect(self.update_time)
         self.clock.start(1)
 
         self.time_app = 0
@@ -24,16 +29,37 @@ class Doctor(QMainWindow):
         self.timer_up = QTimer()
         self.timer_up.setInterval(self.time_interval)
         self.timer_up.timeout.connect(self.update_uptime)
-        self.timer_up.start()
+        self.button_start_finish.clicked.connect(self.appointment_clicked)
 
     def update_uptime(self):
         self.time_app += 1
         self.label_timer_app.setText(time.strftime('%M:%S', time.gmtime(self.time_app)))
 
-    def time_update(self):
+    def update_time(self):
         current_time = QTime.currentTime()
         time_on_display = current_time.toString('hh:mm')
         self.label_clock.setText(time_on_display)
+
+    def update_patients_num(self):
+        self.label_patients_num.setNum(self.patients_num)
+
+    def appointment_clicked(self):
+        if self.app_started:
+            self.finish_appointment()
+        else:
+            self.start_appointment()
+
+    def start_appointment(self):
+        self.timer_up.start()
+        self.app_started = True
+
+    def finish_appointment(self):
+        self.timer_up.stop()
+        self.time_app = 0
+        self.label_timer_app.setText(time.strftime('%M:%S', time.gmtime(self.time_app)))
+        self.patients_num += 1
+        self.update_patients_num()
+        self.app_started = False
 
     def open_table(self):
         with open('appointments_eng.csv', encoding="utf8") as csvfile:
