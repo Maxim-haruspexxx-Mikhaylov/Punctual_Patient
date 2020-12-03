@@ -77,7 +77,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_tag_mid_time">
+   <widget class="QLabel" name="label_tag_average_time">
     <property name="geometry">
      <rect>
       <x>400</x>
@@ -113,7 +113,7 @@
      <string>Кол-во принятых пациентов -</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_mid_time">
+   <widget class="QLabel" name="label_average_time">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -159,7 +159,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Завершить приём / начать следующий приём</string>
+     <string>Начать следующий приём</string>
     </property>
    </widget>
    <widget class="QPushButton" name="button_extend_app">
@@ -172,7 +172,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Продлить время приёма</string>
+     <string>Продлить время приёма (5 мин)</string>
     </property>
    </widget>
    <widget class="QPushButton" name="button_leave">
@@ -188,7 +188,7 @@
      <string>Отлучиться (3 мин)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_expected_timer">
+   <widget class="QLabel" name="label_expected_time">
     <property name="geometry">
      <rect>
       <x>470</x>

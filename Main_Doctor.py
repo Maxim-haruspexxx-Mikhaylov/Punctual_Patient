@@ -16,6 +16,7 @@ class Doctor(QMainWindow):
         self.open_table()
 
         self.app_started = False
+        self.app_stopped = False
 
         self.patients_num = 0
         self.update_patients_num()
@@ -31,6 +32,18 @@ class Doctor(QMainWindow):
         self.timer_up.timeout.connect(self.update_uptime)
         self.button_start_finish.clicked.connect(self.appointment_clicked)
 
+        self.average_time = 600
+        self.all_time = 600
+        self.expected_time = self.average_time
+        self.update_average_time()
+        self.update_expected_time()
+
+        self.extension_time = 300
+        self.button_extend_app.clicked.connect(self.extend_expected_time)
+
+        self.leaving_time = 180
+        self.button_leave.clicked.connect(self.leave)
+
     def update_uptime(self):
         self.time_app += 1
         self.label_timer_app.setText(time.strftime('%M:%S', time.gmtime(self.time_app)))
@@ -43,6 +56,25 @@ class Doctor(QMainWindow):
     def update_patients_num(self):
         self.label_patients_num.setNum(self.patients_num)
 
+    def add_to_average_time(self):
+        self.all_time += self.time_app
+        self.average_time = self.all_time // (self.patients_num + 1)
+        print(self.average_time)
+        self.update_average_time()
+
+    def update_average_time(self):
+        if self.average_time % 60:
+            self.label_average_time.setText(f'{self.average_time // 60} мин {self.average_time % 60} сек')
+        else:
+            self.label_average_time.setText(f'{self.average_time // 60} мин')
+
+    def update_expected_time(self):
+        self.label_expected_time.setText(time.strftime('%M:%S', time.gmtime(self.expected_time)))
+
+    def extend_expected_time(self):
+        self.expected_time += self.extension_time
+        self.update_expected_time()
+
     def appointment_clicked(self):
         if self.app_started:
             self.finish_appointment()
@@ -50,16 +82,33 @@ class Doctor(QMainWindow):
             self.start_appointment()
 
     def start_appointment(self):
+        self.button_start_finish.setText('Завершить приём')
         self.timer_up.start()
         self.app_started = True
 
     def finish_appointment(self):
         self.timer_up.stop()
+        self.patients_num += 1
+        self.add_to_average_time()
         self.time_app = 0
         self.label_timer_app.setText(time.strftime('%M:%S', time.gmtime(self.time_app)))
-        self.patients_num += 1
         self.update_patients_num()
+        self.expected_time = self.average_time
+        self.update_expected_time()
+        self.button_start_finish.setText('Начать следующий приём')
         self.app_started = False
+
+    def leave(self):
+        if self.app_stopped:
+            self.timer_up.start()
+            self.app_stopped = False
+            self.app_started = True
+            self.button_leave.setText('Отлучиться (3 мин)')
+        elif self.app_started:
+            self.timer_up.stop()
+            self.app_stopped = True
+            self.app_started = False
+            self.button_leave.setText('Вернуться к работе')
 
     def open_table(self):
         with open('appointments_eng.csv', encoding="utf8") as csvfile:
