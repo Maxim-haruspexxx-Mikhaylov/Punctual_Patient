@@ -1,5 +1,7 @@
+import datetime as dt
 import sys
 import csv
+import sqlite3
 from PyQt5.QtGui import QPixmap, QImage, QColor, QTransform, qRgb, QFont, QKeySequence, QKeyEvent
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QFileDialog, QAction, QWidget, \
     QTableWidgetItem, QAbstractItemView
@@ -12,11 +14,22 @@ class Doctor(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('Doctor_main_design.ui', self)
-
-        self.open_table()
+        self.con = sqlite3.connect("Appointments.db")
+        self.cur = self.con.cursor()
 
         self.app_started = False
         self.app_stopped = False
+
+        self.cabinet_num = '24'
+        self.current_patient_num = 1
+        self.current_time = QTime.currentTime().toString('hh:mm')
+        self.last_time_for_app = 60 * 10
+        self.target_of_app = 'Первичный осмотр'
+        self.time_for_app = 60 * 10
+        self.query = 'SELECT * FROM apps'
+        self.button_make_app.clicked.connect(self.make_appointment)
+
+        self.open_table()
 
         self.patients_num = 0
         self.update_patients_num()
@@ -43,14 +56,15 @@ class Doctor(QMainWindow):
 
         self.leaving_time = 180
         self.button_leave.clicked.connect(self.leave)
+        print('ok')
 
     def update_uptime(self):
         self.time_app += 1
         self.label_timer_app.setText(time.strftime('%M:%S', time.gmtime(self.time_app)))
 
     def update_time(self):
-        current_time = QTime.currentTime()
-        time_on_display = current_time.toString('hh:mm')
+        self.current_time = QTime.currentTime()
+        time_on_display = self.current_time.toString('hh:mm')
         self.label_clock.setText(time_on_display)
 
     def update_patients_num(self):
@@ -110,21 +124,45 @@ class Doctor(QMainWindow):
             self.app_started = False
             self.button_leave.setText('Вернуться к работе')
 
+    def make_appointment(self):
+        if self.current_patient_num // 10 == 0:
+            num_for_table = '0' + str(self.current_patient_num)
+        else:
+            num_for_table = str(self.current_patient_num)
+        self.time_for_app += self.average_time // 60
+        if self.time_for_app % 60 // 10:
+            app_time = f'{self.time_for_app // 60}:{self.time_for_app % 60}'
+        else:
+            app_time = f'{self.time_for_app // 60}:{"0" + str(self.time_for_app % 60)}'
+        type_of_app = 'Запись'
+        self.target_of_app = 'Первичный осмотр'
+        self.add_appointment(num_for_table, app_time, type_of_app, 'Первичный осмотр')
+
+    def add_appointment(self, num_for_table, time_for_patient, type_of_app, target_of_app):
+
+        print(self.cur.execute('SELECT * FROM apps'))
+        self.cur.execute('INSERT INTO apps VALUES(?, ?, ?, ?)', (self.cabinet_num + num_for_table,
+                                                                 time_for_patient, type_of_app, target_of_app))
+        self.open_table()
+        self.current_patient_num += 1
+        self.last_time_for_app = time_for_patient
+
     def open_table(self):
-        with open('appointments_eng.csv', encoding="utf8") as csvfile:
-            reader = csv.reader(csvfile, delimiter=';', quotechar='"')
-            title = next(reader)
-            self.table_widget.setColumnCount(3)
-            self.table_widget.setHorizontalHeaderLabels(title)
-            self.table_widget.setRowCount(0)
-            for i, row in enumerate(reader):
-                self.table_widget.setRowCount(
-                    self.table_widget.rowCount() + 1)
-                for j, elem in enumerate(row):
-                    self.table_widget.setItem(
-                        i, j, QTableWidgetItem(elem))
+        res = self.con.cursor().execute(self.query).fetchall()
+        self.table_widget.setColumnCount(4)
+        self.table_widget.setRowCount(0)
+        self.table_widget.setHorizontalHeaderLabels(['Номер', 'Время', 'Тип записи', 'Цель приёма'])
+        for i, row in enumerate(res[1:]):
+            self.table_widget.setRowCount(
+                self.table_widget.rowCount() + 1)
+            for j, elem in enumerate(row):
+                self.table_widget.setItem(
+                    i, j, QTableWidgetItem(str(elem)))
         self.table_widget.resizeColumnsToContents()
         self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+    def closeEvent(self, event):
+        self.connection.close()
 
 
 if __name__ == '__main__':
