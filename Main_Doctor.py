@@ -90,20 +90,6 @@ class Doctor(QMainWindow):
 
     def extend_expected_time(self):
         self.expected_time += self.extension_time
-        for elem, elem_2 in self.cur.execute('SELECT Time, Number FROM apps WHERE Type = ?', ('Запись',)).fetchall():
-            if not elem[-2]:
-                f_time_finding_1 = int(elem[0:2]) + self.average_time
-                if f_time_finding_1 % 60 // 10:
-                    new_time = f'{f_time_finding_1 // 60}:{f_time_finding_1 % 60}'
-                else:
-                    new_time = f'{f_time_finding_1 // 60}:0{f_time_finding_1 % 60}'
-            else:
-                f_time_finding_2 = int(elem[0:2]) + int(elem[3:5]) + self.average_time
-                if f_time_finding_2 % 60 // 10:
-                    new_time = f'{f_time_finding_2 // 60}:{f_time_finding_2 % 60}'
-                else:
-                    new_time = f'{f_time_finding_2 // 60}:0{f_time_finding_2 % 60}'
-            self.cur.execute('UPDATE apps SET Time = ?', (new_time,))
         self.update_expected_time()
 
     def appointment_clicked(self):
