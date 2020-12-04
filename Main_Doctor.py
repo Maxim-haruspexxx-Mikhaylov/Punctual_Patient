@@ -2,7 +2,7 @@ import datetime as dt
 import sys
 import csv
 import sqlite3
-from PyQt5.QtGui import QPixmap, QImage, QColor, QTransform, qRgb, QFont, QKeySequence, QKeyEvent
+from PyQt5.QtGui import QPixmap, QImage, QColor, QTransform, qRgb, QFont
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QFileDialog, QAction, QWidget, \
     QTableWidgetItem, QAbstractItemView
 from PyQt5 import uic, QtCore, QtGui
@@ -21,6 +21,7 @@ class Doctor(QMainWindow):
         self.app_stopped = False
 
         self.cabinet_num = '24'
+        self.patient_num = 1
         self.current_patient_num = 1
         self.current_time = QTime.currentTime().toString('hh:mm')
         self.last_time_for_app = 60 * 10
@@ -56,7 +57,10 @@ class Doctor(QMainWindow):
 
         self.leaving_time = 180
         self.button_leave.clicked.connect(self.leave)
-        print('ok')
+
+    def color_row(self, row):
+        for i in range(self.table_widget.columnCount()):
+            self.table_widget.item(row, i).setBackground(QColor(0, 150, 100))
 
     def update_uptime(self):
         self.time_app += 1
@@ -73,7 +77,6 @@ class Doctor(QMainWindow):
     def add_to_average_time(self):
         self.all_time += self.time_app
         self.average_time = self.all_time // (self.patients_num + 1)
-        print(self.average_time)
         self.update_average_time()
 
     def update_average_time(self):
@@ -87,6 +90,20 @@ class Doctor(QMainWindow):
 
     def extend_expected_time(self):
         self.expected_time += self.extension_time
+        for elem, elem_2 in self.cur.execute('SELECT Time, Number FROM apps WHERE Type = ?', ('Запись',)).fetchall():
+            if not elem[-2]:
+                f_time_finding_1 = int(elem[0:2]) + self.average_time
+                if f_time_finding_1 % 60 // 10:
+                    new_time = f'{f_time_finding_1 // 60}:{f_time_finding_1 % 60}'
+                else:
+                    new_time = f'{f_time_finding_1 // 60}:0{f_time_finding_1 % 60}'
+            else:
+                f_time_finding_2 = int(elem[0:2]) + int(elem[3:5]) + self.average_time
+                if f_time_finding_2 % 60 // 10:
+                    new_time = f'{f_time_finding_2 // 60}:{f_time_finding_2 % 60}'
+                else:
+                    new_time = f'{f_time_finding_2 // 60}:0{f_time_finding_2 % 60}'
+            self.cur.execute('UPDATE apps SET Time = ?', (new_time,))
         self.update_expected_time()
 
     def appointment_clicked(self):
@@ -99,6 +116,12 @@ class Doctor(QMainWindow):
         self.button_start_finish.setText('Завершить приём')
         self.timer_up.start()
         self.app_started = True
+        self.current_patient_num = self.cur.execute('SELECT Number FROM apps ORDER BY Time').fetchone()[0]
+        if self.current_patient_num // 10:
+            self.current_num = self.cabinet_num + str(self.current_patient_num)
+        else:
+            self.current_num = self.cabinet_num + '0' + str(self.current_patient_num)
+        self.color_row(0)
 
     def finish_appointment(self):
         self.timer_up.stop()
@@ -111,6 +134,8 @@ class Doctor(QMainWindow):
         self.update_expected_time()
         self.button_start_finish.setText('Начать следующий приём')
         self.app_started = False
+        self.cur.execute('DELETE FROM apps WHERE Number = ?', (self.current_patient_num,))
+        self.open_table()
 
     def leave(self):
         if self.app_stopped:
@@ -125,10 +150,10 @@ class Doctor(QMainWindow):
             self.button_leave.setText('Вернуться к работе')
 
     def make_appointment(self):
-        if self.current_patient_num // 10 == 0:
-            num_for_table = '0' + str(self.current_patient_num)
+        if self.patient_num // 10 == 0:
+            num_for_table = '0' + str(self.patient_num)
         else:
-            num_for_table = str(self.current_patient_num)
+            num_for_table = str(self.patient_num)
         self.time_for_app += self.average_time // 60
         if self.time_for_app % 60 // 10:
             app_time = f'{self.time_for_app // 60}:{self.time_for_app % 60}'
@@ -139,12 +164,10 @@ class Doctor(QMainWindow):
         self.add_appointment(num_for_table, app_time, type_of_app, 'Первичный осмотр')
 
     def add_appointment(self, num_for_table, time_for_patient, type_of_app, target_of_app):
-
-        print(self.cur.execute('SELECT * FROM apps'))
         self.cur.execute('INSERT INTO apps VALUES(?, ?, ?, ?)', (self.cabinet_num + num_for_table,
                                                                  time_for_patient, type_of_app, target_of_app))
         self.open_table()
-        self.current_patient_num += 1
+        self.patient_num += 1
         self.last_time_for_app = time_for_patient
 
     def open_table(self):
@@ -168,6 +191,6 @@ class Doctor(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Doctor()
-    win.setFixedSize(730, 861)
+    win.setFixedSize(690, 850)
     win.show()
     sys.exit(app.exec_())

@@ -6,18 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>730</width>
-    <height>861</height>
+    <width>690</width>
+    <height>850</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Doctor</string>
+   <string>Доктор</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label_clock">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>390</x>
       <y>30</y>
       <width>251</width>
       <height>91</height>
@@ -38,7 +38,7 @@
    <widget class="QLabel" name="label_tag_timer_app">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>390</x>
       <y>380</y>
       <width>251</width>
       <height>91</height>
@@ -59,7 +59,7 @@
    <widget class="QLabel" name="label_timer_app">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>430</x>
       <y>450</y>
       <width>181</width>
       <height>91</height>
@@ -80,7 +80,7 @@
    <widget class="QLabel" name="label_tag_average_time">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>360</x>
       <y>140</y>
       <width>181</width>
       <height>41</height>
@@ -98,7 +98,7 @@
    <widget class="QLabel" name="label_tag_patients_num">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>360</x>
       <y>180</y>
       <width>271</width>
       <height>41</height>
@@ -116,7 +116,7 @@
    <widget class="QLabel" name="label_average_time">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>540</x>
       <y>140</y>
       <width>131</width>
       <height>41</height>
@@ -134,7 +134,7 @@
    <widget class="QLabel" name="label_patients_num">
     <property name="geometry">
      <rect>
-      <x>670</x>
+      <x>630</x>
       <y>180</y>
       <width>31</width>
       <height>41</height>
@@ -152,7 +152,7 @@
    <widget class="QPushButton" name="button_start_finish">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>390</x>
       <y>560</y>
       <width>251</width>
       <height>51</height>
@@ -165,7 +165,7 @@
    <widget class="QPushButton" name="button_extend_app">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>390</x>
       <y>620</y>
       <width>251</width>
       <height>51</height>
@@ -178,7 +178,7 @@
    <widget class="QPushButton" name="button_leave">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>390</x>
       <y>680</y>
       <width>251</width>
       <height>51</height>
@@ -191,7 +191,7 @@
    <widget class="QLabel" name="label_expected_time">
     <property name="geometry">
      <rect>
-      <x>470</x>
+      <x>430</x>
       <y>300</y>
       <width>181</width>
       <height>91</height>
@@ -212,7 +212,7 @@
    <widget class="QLabel" name="label_tag_expected_time">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>410</x>
       <y>220</y>
       <width>211</width>
       <height>91</height>
@@ -236,7 +236,7 @@
      <rect>
       <x>30</x>
       <y>740</y>
-      <width>351</width>
+      <width>301</width>
       <height>51</height>
      </rect>
     </property>
@@ -249,7 +249,7 @@
      <rect>
       <x>30</x>
       <y>30</y>
-      <width>351</width>
+      <width>301</width>
       <height>701</height>
      </rect>
     </property>
@@ -260,7 +260,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>730</width>
+     <width>690</width>
      <height>20</height>
     </rect>
    </property>
