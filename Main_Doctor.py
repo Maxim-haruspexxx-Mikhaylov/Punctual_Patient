@@ -27,13 +27,17 @@ class Doctor(QMainWindow):
         self.last_time_for_app = 60 * 10
         self.target_of_app = 'Первичный осмотр'
         self.time_for_app = 60 * 10
-        self.query = 'SELECT * FROM apps'
         self.button_make_app.clicked.connect(self.make_appointment)
+
+        self.today_date = dt.date.today().strftime('_%d_%m_%Y_')
+        self.date = dt.date.today().strftime('_%d_%m_%Y_')
+        print(self.date)
 
         self.open_table()
 
         self.patients_num = 0
         self.update_patients_num()
+        self.patient_name = 'Иван Иванов'
 
         self.clock = QTimer()
         self.clock.timeout.connect(self.update_time)
@@ -57,6 +61,13 @@ class Doctor(QMainWindow):
 
         self.leaving_time = 180
         self.button_leave.clicked.connect(self.leave)
+
+        self.button_change_date.clicked.connect(self.change_date)
+
+    def change_date(self):
+        self.date = self.date_edit.date().toString('_dd_MM_yyyy_')
+        print(self.date)
+        self.open_table()
 
     def color_row(self, row):
         for i in range(self.table_widget.columnCount()):
@@ -91,6 +102,7 @@ class Doctor(QMainWindow):
     def extend_expected_time(self):
         self.expected_time += self.extension_time
         self.update_expected_time()
+        self.change_table()
 
     def appointment_clicked(self):
         if self.app_started:
@@ -102,7 +114,7 @@ class Doctor(QMainWindow):
         self.button_start_finish.setText('Завершить приём')
         self.timer_up.start()
         self.app_started = True
-        self.current_patient_num = self.cur.execute('SELECT Number FROM apps ORDER BY Time').fetchone()[0]
+        self.current_patient_num = self.cur.execute(f'SELECT Number FROM {self.date} ORDER BY Time').fetchone()[0]
         if self.current_patient_num // 10:
             self.current_num = self.cabinet_num + str(self.current_patient_num)
         else:
@@ -120,7 +132,7 @@ class Doctor(QMainWindow):
         self.update_expected_time()
         self.button_start_finish.setText('Начать следующий приём')
         self.app_started = False
-        self.cur.execute('DELETE FROM apps WHERE Number = ?', (self.current_patient_num,))
+        self.cur.execute(f'DELETE FROM {self.date} WHERE Number = ?', (self.current_patient_num,))
         self.open_table()
 
     def leave(self):
@@ -150,18 +162,21 @@ class Doctor(QMainWindow):
         self.add_appointment(num_for_table, app_time, type_of_app, 'Первичный осмотр')
 
     def add_appointment(self, num_for_table, time_for_patient, type_of_app, target_of_app):
-        self.cur.execute('INSERT INTO apps VALUES(?, ?, ?, ?)', (self.cabinet_num + num_for_table,
-                                                                 time_for_patient, type_of_app, target_of_app))
+        print(self.cabinet_num + num_for_table, self.patient_name, time_for_patient, type_of_app, target_of_app)
+        self.cur.execute(f'INSERT INTO {self.date} VALUES(?, ?, ?, ?, ?)', (self.cabinet_num + num_for_table,
+                                                                            self.patient_name, time_for_patient,
+                                                                            type_of_app, target_of_app))
         self.open_table()
         self.patient_num += 1
         self.last_time_for_app = time_for_patient
 
     def open_table(self):
-        res = self.con.cursor().execute(self.query).fetchall()
-        self.table_widget.setColumnCount(4)
+        res = self.con.cursor().execute(f'SELECT * FROM {self.date}').fetchall()
+        print(res)
+        self.table_widget.setColumnCount(5)
         self.table_widget.setRowCount(0)
-        self.table_widget.setHorizontalHeaderLabels(['Номер', 'Время', 'Тип записи', 'Цель приёма'])
-        for i, row in enumerate(res[1:]):
+        self.table_widget.setHorizontalHeaderLabels(['Номер', 'Имя пациента', 'Время', 'Тип записи', 'Цель приёма'])
+        for i, row in enumerate(res):
             self.table_widget.setRowCount(
                 self.table_widget.rowCount() + 1)
             for j, elem in enumerate(row):
@@ -170,6 +185,35 @@ class Doctor(QMainWindow):
         self.table_widget.resizeColumnsToContents()
         self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
+    def change_table(self):
+        res = self.con.cursor().execute(f'SELECT * FROM {self.date}').fetchall()
+        for elem in res:
+            self.time_for_app = 0
+            if elem[2][0]:
+                self.time_for_app += int(elem[2][0:2]) * 60
+            else:
+                self.time_for_app += int(elem[2][1]) * 60
+            if elem[2][3]:
+                self.time_for_app += int(elem[2][3:])
+            else:
+                self.time_for_app += int(elem[2][4])
+            self.time_for_app += self.average_time // 60
+            if self.time_for_app % 60 // 10:
+                app_time = f'{self.time_for_app // 60}:{self.time_for_app % 60}'
+            else:
+                app_time = f'{self.time_for_app // 60}:{"0" + str(self.time_for_app % 60)}'
+            print('yes')
+            print('yes')
+            self.cur.execute(f'INSERT INTO {self.date} VALUES(?, ?, ?, ?, ?)', (35, elem[1], app_time, elem[3],
+                                                                                elem[4]))
+            print('yes')
+            self.cur.execute(f'DELETE FROM {self.date} WHERE Number = ?', (elem[0],))
+            print('yes')
+
+            print(elem[0], elem[1], app_time, elem[3], elem[4])
+            self.cur.execute(f'INSERT INTO {self.date} VALUES({elem[0]}, {elem[1]}, {app_time}, {elem[3]}, {elem[4]})')
+            print('yes')
+
     def closeEvent(self, event):
         self.connection.close()
 
@@ -177,6 +221,6 @@ class Doctor(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Doctor()
-    win.setFixedSize(690, 850)
+    win.setFixedSize(809, 850)
     win.show()
     sys.exit(app.exec_())
